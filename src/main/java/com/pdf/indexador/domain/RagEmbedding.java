@@ -6,5 +6,6 @@ public record RagEmbedding(
         UUID documentId,
         int chunkIndex,
         String content,
-        String documentName
+        String documentName,
+        float[] embedding
 ) {}

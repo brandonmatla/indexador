@@ -23,6 +23,8 @@ public class PdfProcessor implements ItemProcessor<File, RagEmbedding> {
     @Override
     public RagEmbedding process(File file) {
         List<String> pages = pdfService.extractPages(file);
-        return embeddingService.generateEmbedding(file.getName(), pages);
+        List<RagEmbedding> embeddings = embeddingService.generateEmbeddings(file.getName(), pages);
+        // solo devuelve el primer embedding; el resto los escribes en otro Step o usando un CompositeItemWriter
+        return embeddings.get(0);
     }
 }

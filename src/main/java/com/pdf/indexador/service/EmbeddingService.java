@@ -3,18 +3,47 @@ package com.pdf.indexador.service;
 import com.pdf.indexador.domain.RagEmbedding;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class EmbeddingService {
 
-    public RagEmbedding generateEmbedding(String fileName, List<String> pages) {
-        return new RagEmbedding(
-                UUID.randomUUID(),
-                pages.size(),
-                String.join("\n", pages),
-                fileName
-        );
+    private static final int CHUNK_SIZE = 1000; // cantidad de caracteres por chunk (ajusta según necesites)
+
+    public List<RagEmbedding> generateEmbeddings(String fileName, List<String> pages) {
+        List<RagEmbedding> embeddings = new ArrayList<>();
+        String content = String.join("\n", pages);
+
+        // dividir contenido en chunks
+        int chunkIndex = 0;
+        for (int start = 0; start < content.length(); start += CHUNK_SIZE) {
+            int end = Math.min(start + CHUNK_SIZE, content.length());
+            String chunkContent = content.substring(start, end);
+
+            float[] vector = createEmbedding(chunkContent); // <-- genera embedding
+
+            embeddings.add(new RagEmbedding(
+                    UUID.randomUUID(),
+                    chunkIndex,
+                    chunkContent,
+                    fileName,
+                    vector
+            ));
+            chunkIndex++;
+        }
+
+        return embeddings;
+    }
+
+    // método de ejemplo para generar un embedding falso (float[])
+    private float[] createEmbedding(String text) {
+        int dim = 768; // dimensión típica de embeddings de OpenAI
+        float[] embedding = new float[dim];
+        for (int i = 0; i < dim; i++) {
+            embedding[i] = (float) Math.random(); // temporal: reemplaza por tu modelo real
+        }
+        return embedding;
     }
 }
