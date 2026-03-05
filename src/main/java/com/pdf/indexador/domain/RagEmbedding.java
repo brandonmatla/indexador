@@ -7,5 +7,6 @@ public record RagEmbedding(
         int chunkIndex,
         String content,
         String documentName,
+        String filePath,
         float[] embedding
 ) {}

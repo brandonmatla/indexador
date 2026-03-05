@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.List;
 
 @Component
-public class PdfProcessor implements ItemProcessor<File, RagEmbedding> {
+public class PdfProcessor implements ItemProcessor<File, List<RagEmbedding>> {
 
     private final PdfService pdfService;
     private final EmbeddingService embeddingService;
@@ -21,10 +21,13 @@ public class PdfProcessor implements ItemProcessor<File, RagEmbedding> {
     }
 
     @Override
-    public RagEmbedding process(File file) {
+    public List<RagEmbedding> process(File file) {
         List<String> pages = pdfService.extractPages(file);
-        List<RagEmbedding> embeddings = embeddingService.generateEmbeddings(file.getName(), pages);
+//        List<RagEmbedding> embeddings = embeddingService.generateEmbeddings(file.getName(), pages);
         // solo devuelve el primer embedding; el resto los escribes en otro Step o usando un CompositeItemWriter
-        return embeddings.get(0);
+        return  embeddingService.generateEmbeddings(
+                file.getName(),
+                file.getAbsolutePath()
+                , pages);
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.File;
+import java.util.List;
 
 @Configuration
 @EnableBatchProcessing
@@ -38,7 +39,7 @@ public class BatchConfig {
             RagWriter writer
     ) {
         return new StepBuilder("pdfStep", jobRepository)
-                .<File, RagEmbedding>chunk(1, transactionManager)
+                .<File, List<RagEmbedding>>chunk(1, transactionManager) // <File, List<RagEmbedding>>
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

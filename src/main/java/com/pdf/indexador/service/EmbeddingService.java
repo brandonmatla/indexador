@@ -3,6 +3,7 @@ package com.pdf.indexador.service;
 import com.pdf.indexador.domain.RagEmbedding;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,7 +13,8 @@ public class EmbeddingService {
 
     private static final int CHUNK_SIZE = 1000; // cantidad de caracteres por chunk (ajusta según necesites)
 
-    public List<RagEmbedding> generateEmbeddings(String fileName, List<String> pages) {
+    // Ahora recibimos también la ruta completa del archivo
+    public List<RagEmbedding> generateEmbeddings(String fileName, String filePath, List<String> pages) {
         List<RagEmbedding> embeddings = new ArrayList<>();
         String content = String.join("\n", pages);
 
@@ -22,13 +24,15 @@ public class EmbeddingService {
             int end = Math.min(start + CHUNK_SIZE, content.length());
             String chunkContent = content.substring(start, end);
 
-            float[] vector = createEmbedding(chunkContent); // <-- genera embedding
+            float[] vector = createEmbedding(chunkContent); // genera embedding
 
+            // Creamos el RagEmbedding con los 6 parámetros correctos
             embeddings.add(new RagEmbedding(
                     UUID.randomUUID(),
                     chunkIndex,
                     chunkContent,
                     fileName,
+                    filePath,
                     vector
             ));
             chunkIndex++;
