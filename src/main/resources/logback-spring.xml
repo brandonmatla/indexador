@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Carpeta de logs -->
+    <property name="LOG_PATH" value="logs"/>
+    <property name="APP_NAME" value="indexador"/>
+
+    <!-- ===================== -->
+    <!-- FORMATO -->
+    <!-- ===================== -->
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- ===================== -->
+    <!-- CONSOLA -->
+    <!-- ===================== -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ===================== -->
+    <!-- LOG GENERAL -->
+    <!-- ===================== -->
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_PATH}/${APP_NAME}.log</file>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+            <!-- rotación diaria -->
+            <fileNamePattern>
+                ${LOG_PATH}/${APP_NAME}.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+
+            <!-- conservar 7 días -->
+            <maxHistory>7</maxHistory>
+
+            <!-- tamaño máximo total -->
+            <totalSizeCap>2GB</totalSizeCap>
+
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- ===================== -->
+    <!-- LOG DE ERRORES -->
+    <!-- ===================== -->
+    <appender name="ERROR_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <file>${LOG_PATH}/${APP_NAME}-error.log</file>
+
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+            <fileNamePattern>
+                ${LOG_PATH}/${APP_NAME}-error.%d{yyyy-MM-dd}.log.gz
+            </fileNamePattern>
+
+            <maxHistory>7</maxHistory>
+
+        </rollingPolicy>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+
+    </appender>
+
+    <!-- ===================== -->
+    <!-- LOGS SPRING BATCH -->
+    <!-- ===================== -->
+    <logger name="org.springframework.batch" level="INFO"/>
+
+    <!-- ===================== -->
+    <!-- LOGS DE TU APP -->
+    <!-- ===================== -->
+    <logger name="com.pdf" level="DEBUG"/>
+
+    <!-- ===================== -->
+    <!-- ROOT -->
+    <!-- ===================== -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR_FILE"/>
+    </root>
+
+</configuration>
